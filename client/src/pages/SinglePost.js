@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import cx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -13,7 +13,7 @@ import { useOverShadowStyles } from "@mui-treasury/styles/shadow/over";
 
 import { Spinner } from "react-bootstrap";
 
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { AuthContext } from "../context/auth/auth";
 import { useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
@@ -39,10 +39,10 @@ const useStyles = makeStyles(({ breakpoints, spacing }) => ({
     flexDirection: "column",
     alignItems: "center",
     paddingBottom: spacing(2),
-    [breakpoints.up("md")]: {
-      flexDirection: "row",
-      paddingTop: spacing(2),
-    },
+    // [breakpoints.up("md")]: {
+    //   flexDirection: "row",
+    //   paddingTop: spacing(2),
+    // },
   },
   media: {
     width: "88%",
@@ -54,12 +54,12 @@ const useStyles = makeStyles(({ breakpoints, spacing }) => ({
     borderRadius: spacing(2),
     backgroundColor: "#fff",
     position: "relative",
-    [breakpoints.up("md")]: {
-      width: "100%",
-      marginLeft: spacing(-3),
-      marginTop: 0,
-      transform: "translateX(-8px)",
-    },
+    // [breakpoints.up("md")]: {
+    //   width: "100%",
+    //   marginLeft: spacing(-3),
+    //   marginTop: 0,
+    //   transform: "translateX(-8px)",
+    // },
     "&:after": {
       content: '" "',
       position: "absolute",
@@ -103,7 +103,17 @@ export const SinglePost = React.memo(function BlogCard() {
   const { data } = useQuery(GET_POST, {
     variables: { postId },
   });
-  console.log(data);
+
+  const [comment, setComment] = useState("");
+  const [submitComment] = useMutation(CREATE_COMMENT, {
+    variables: {
+      postId,
+      body: comment,
+    },
+    update() {
+      setComment("");
+    },
+  });
   const post = data && data.getPost;
   return (
     <>
@@ -126,39 +136,72 @@ export const SinglePost = React.memo(function BlogCard() {
             <Divider />
             <Divider />
             <Divider />
-            <LikeButton
-              className={buttonStyles}
-              likes={post.likes}
-              id={postId}
-              user={user}
-            />
-            {user && user.username === post.username && (
-              <Button onClick={() => history.push("/")}>
-                <DeleteButton postId={post.id} />
-              </Button>
-            )}
-          </CardContent>
-          <div className="comments">
-            <TextField placeholder="Add Comment" />
-            <AddCommentIcon />
-          </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "2rem",
+                justifyContent: "space-between",
+              }}
+            >
+              <LikeButton
+                className={buttonStyles}
+                likes={post.likes}
+                id={postId}
+                user={user}
+              />
+              <span>
+                {user && user.username === post.username && (
+                  <DeleteButton postId={post.id} />
+                )}
+              </span>
+            </div>
+          </CardContent>{" "}
+          {user && (
+            <div className="comments">
+              <form>
+                <TextField
+                  placeholder="Add Comment"
+                  type="text"
+                  name="comment"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <Button
+                  type="submit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    submitComment();
+                  }}
+                  startIcon={<AddCommentIcon />}
+                >
+                  Comment
+                </Button>
+              </form>
+            </div>
+          )}
           <div>
             {post &&
               post.comments.map((comment) => {
                 return (
                   <Card>
-                    <CardContent>
+                    <CardContent
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        margin: "auto",
+                        padding: "15px",
+                      }}
+                    >
                       <Typography className={styles.pos} color="textSecondary">
                         {comment.username}
                       </Typography>
+                      <Divider />
                       <Typography variant="h5" component="h2">
                         {comment.body}
                       </Typography>
-                      <span>
-                        {user && user.username === comment.username && (
-                          <DeleteButton />
-                        )}
-                      </span>
+                      <Divider />
                       <Typography
                         className={styles.title}
                         color="textSecondary"
@@ -166,6 +209,9 @@ export const SinglePost = React.memo(function BlogCard() {
                       >
                         {moment(comment.createdAt).fromNow()}
                       </Typography>
+                      {user && user.username === comment.username && (
+                        <DeleteButton postId={post.id} commentId={comment.id} />
+                      )}
                     </CardContent>
                   </Card>
                 );
@@ -208,102 +254,16 @@ const GET_POST = gql`
   }
 `;
 
-// import React, { useContext } from "react";
-// import {
-//   Container,
-//   Card,
-//   CardActionArea,
-//   CardMedia,
-//   CardContent,
-//   Typography,
-//   CardActions,
-//   Button,
-// } from "@material-ui/core";
-// import { Spinner } from "react-bootstrap";
-
-// import { gql, useQuery } from "@apollo/client";
-// import { AuthContext } from "../context/auth/auth";
-// import { useParams } from "react-router-dom";
-// import { useHistory } from "react-router-dom";
-
-// import moment from "moment";
-
-// import LikeButton from "../components/LikeButton";
-// import DeleteButton from "../components/DeletButton";
-// const SinglePost = () => {
-//   const history = useHistory();
-//   const { id: postId } = useParams();
-//   const { user } = useContext(AuthContext);
-//   const { data, loading } = useQuery(GET_POST, {
-//     variables: { postId },
-//   });
-//   const post = data && data.getPost;
-//   return (
-//     <Container>
-//       {data ? (
-//         <Card>
-//           <CardActionArea>
-//             <CardMedia
-//               component="img"
-//               alt={post.body}
-//               height="100%"
-//               image={post.file}
-//               title={post.body}
-//             />
-//             <CardContent>
-//               <Typography gutterBottom variant="h3" component="h2">
-//                 {post.username}
-//               </Typography>
-//               <Typography variant="h5" color="textSecondary" component="p">
-//                 {post.body}
-//               </Typography>
-//               <Typography variant="body2" component="subtitle1">
-//                 {moment(post.createdAt).fromNow()}
-//               </Typography>
-//             </CardContent>
-//           </CardActionArea>
-//           <CardActions>
-//             <LikeButton likes={post.likes} id={postId} user={user} />
-
-//             {user && user.username === post.username && (
-//               <Button onClick={() => history.push("/")}>
-//                 <DeleteButton postId={post.id} />
-//               </Button>
-//             )}
-//           </CardActions>
-//         </Card>
-//       ) : (
-//         <div>
-//           <Spinner animation="border" role="status">
-//             <span className="sr-only">Loading...</span>
-//           </Spinner>
-//         </div>
-//       )}
-//     </Container>
-//   );
-// };
-
-// export default SinglePost;
-
-// const GET_POST = gql`
-//   query ($postId: ID!) {
-//     getPost(postId: $postId) {
-//       id
-//       body
-//       username
-//       file
-//       createdAt
-//       comments {
-//         id
-//         username
-//         body
-//         createdAt
-//       }
-//       likes {
-//         username
-//         createdAt
-//         id
-//       }
-//     }
-//   }
-// `;
+const CREATE_COMMENT = gql`
+  mutation ($postId: String!, $body: String!) {
+    createComment(postId: $postId, body: $body) {
+      id
+      comments {
+        id
+        body
+        createdAt
+        username
+      }
+    }
+  }
+`;
