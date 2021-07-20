@@ -1,0 +1,109 @@
+:root {
+  /* Bright orange: hsl(31, 77%, 52%)
+Dark cyan: hsl(184, 100%, 22%)
+Very dark cyan: hsl(179, 100%, 13%) */
+  /* --rich-black-fogra-29: hsla(207, 95%, 8%, 1);
+  --radical-red: hsla(345, 100%, 60%, 1);
+  --tiffany-blue: hsla(174, 62%, 47%, 1);
+  --body: hsla(210, 12%, 97%, 1);
+  --carolina-blue: hsla(202, 90%, 54%, 1); */
+  /* colors pallete */
+  --primary: (#fffffe);
+  --secondary: hsl(217, 90%, 55%);
+  --secondary2: (#a61651);
+  --misc: (#001b2b);
+}
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+/* 
+font-family: 'Lexend Deca', sans-serif; */
+
+body {
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+  background-color: var(--primary);
+  font-size: 15px;
+  color: var(--misc);
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+p {
+  color: var(--secondary);
+  font-weight: 400;
+}
+h1 {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+}
+.navbar {
+  background-color: var(--misc);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.post-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  margin: 2rem;
+}
+.post-form {
+  padding: 25px;
+  border: var(--secondary) solid 1px;
+  max-width: 100%;
+  margin: 2rem;
+  border-radius: 50px;
+}
+
+.single-post {
+  padding: 25px;
+  border: var(--secondary) solid 1px;
+  max-width: 100%;
+  margin: 2rem;
+  border-radius: 50px;
+}
+.single-post img {
+  max-width: 100%;
+  overflow: hidden;
+}
+Link {
+  list-style: none;
+  text-decoration: none;
+}
+link {
+  list-style: none;
+  text-decoration: none;
+}
+button {
+  border: none;
+  padding: 10px;
+  align-items: center;
+  border-radius: 50px;
+  width: 100px;
+  background-color: var(--secondary);
+  color: #fffffe;
+  size: 50px;
+}
+.btn {
+  display: inline-flex;
+  flex-direction: row;
+  gap: 25px;
+  justify-content: center;
+  padding: 10px;
+}
+
+/* .btn :hover {
+  background-color: hsl(217, 96%, 46%);
+} */
+/* #btn1 {
+}
+#btn2 {
+} */
+
+/* mobile responsive */
+@media (max-width: 550px) {
+  .post-container {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}

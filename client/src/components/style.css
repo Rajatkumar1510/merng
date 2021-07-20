@@ -1,0 +1,33 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-size: 25px;
+
+  font-weight: 1000;
+}
+.logo :hover {
+  color: skyblue;
+}
+.options {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+}
+.options :hover {
+  color: skyblue;
+}
+.options_link {
+  padding: 5px;
+}
+:link {
+  text-decoration: none;
+}
+
+link {
+  text-decoration: none;
+  color: inherit;
+}
